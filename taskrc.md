@@ -1,6 +1,10 @@
 ## py-select-line taskrc.md
 `select-line` is a Python script that serves as curses-based smart replacement for the crummy `bash select` built-in.
 
+### TODO
+ - http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+
+
 ### Usage:
     select-line --list [filename] {--default-row NN} {--print-full}
 
@@ -27,6 +31,7 @@ function do_example {
 ```
 
 ```bash
+appargs="./select-line.py test/test1.lst"
 
 function debug {
     #Help
@@ -34,8 +39,17 @@ function debug {
     echo "Debugger on $PUDB_TTY: in case of trouble, run 'sleep 100000' on that \
         terminal before launching debug."
 
+    python3.7 -m pudb $appargs
+}
 
-    python3.7 -m pudb ./select-line.py test/test1.lst
+function run {
+    #Help To write logs to another terminal, do 'ln -sf /dev/my/tty/other ./slinput.log'
+    python3.7 $appargs
+}
 
+function tail_log {
+    #Help To write to another terminal, do 'ln -sf /dev/my/tty/other ./slinput.log'
+    touch slinput.log
+    tail -f slinput.log
 }
 ```

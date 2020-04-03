@@ -11,7 +11,6 @@
 
 import sys
 import os
-import curses
 
 def _find_getch():
     try:
@@ -35,24 +34,38 @@ def _find_getch():
 
     return _getch
 
-getch = _find_getch()
+CTRL_C=3
+ESC=27
+
+def test_screenstuff():
+    sys.stderr.write("\u001b[31mhello\u001b30m world")
+
+
 
 def main(win):
-    win.nodelay(True)
-    key=""
-    #win.clear()
-    win.addstr("Detected key:")
-    while 1:
-        try:
-           key = win.getkey()
-           #win.clear()
-           win.addstr("Detected key:")
-           win.addstr(str(key))
-           if key == os.linesep:
-              break
-        except Exception as e:
-           # No input
-           pass
+    with open('slinput.log','w') as keylog:
+        keylog.write("--Log opened--\n")
+
+        test_screenstuff()
+
+        #keylog.flush()
+        sys.stderr.write( '\n'.join(items))
+        getch = _find_getch()
+
+        while True:
+            try:
+                key = getch()
+                #import pudb
+                #pudb.set_trace()
+                keylog.write( f"Key rx: [{key}]:{len(key),ord(key)}\n")
+                #keylog.flush()
+                if key == 'x' or ord(key) == CTRL_C or ord(key) == ESC:
+                    keylog.write("--quit--\n")
+                    #keylog.flush()
+                    break
+            except Exception as e:
+                # No input
+                pass
 
 
 if __name__ == "__main__":
@@ -64,6 +77,6 @@ if __name__ == "__main__":
         pass
 
     items = liststream.read().split('\n')
-    sys.stderr.write( '\n'.join(items))
-    curses.wrapper(main)
+
+    main(items)
 
