@@ -3,6 +3,7 @@
 
 ### TODO
  - http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+    (Using ansi codes in python to build a command line app)
 
 
 ### Usage:
