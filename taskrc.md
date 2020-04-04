@@ -1,9 +1,9 @@
 ## py-select-line taskrc.md
-`select-line` is a Python script that serves as curses-based smart replacement for the crummy `bash select` built-in.
+`select-line` is a Python script that serves as smarter replacement for the crummy `bash select` built-in.
 
-### TODO
- - http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
-    (Using ansi codes in python to build a command line app)
+### Dependencies
+  - Requires the [blessed](https://github.com/jquast/blessed) package
+
 
 
 ### Usage:
