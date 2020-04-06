@@ -9,36 +9,23 @@
 #  Because select-line doesn't output to stdout until completion, it
 #  is easy to use from subshells in command substitution contexts.
 
+import blessed  # See https://blessed.readthedocs.io/en/latest/api/terminal.html
+
 import sys
 import os
 
-def _find_getch():
-    try:
-        import termios
-    except ImportError:
-        # Non-POSIX. Return msvcrt's (Windows') getch.
-        import msvcrt
-        return msvcrt.getch
 
-    # POSIX system. Create and return a getch that manipulates the tty.
-    import sys, tty
-    def _getch():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(fd)
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
-    return _getch
-
-CTRL_C=3
-ESC=27
-
-def test_screenstuff():
-    sys.stderr.write("\u001b[31mhello\u001b30m world")
+class FrameBuf(object):
+    ''' Represents a framebuffer-like model of the text being presented: this is the
+    raw content of the screen region we're updating, with no color attributes.
+    We abstract it as a 2-d area, even if there's no actual chars printed at
+    a particular location.
+    '''
+    def __init__(self, init_text=[]):
+        ''' init_text: initializes the text content and virtual size of the area.
+        The longest line establishes width.'''
+        self._text = init_text
+        self._width = max(self._text,key=len)
 
 
 
@@ -46,23 +33,10 @@ def main(win):
     with open('slinput.log','w') as keylog:
         keylog.write("--Log opened--\n")
 
-        test_screenstuff()
-
-        #keylog.flush()
-        sys.stderr.write( '\n'.join(items))
-        getch = _find_getch()
 
         while True:
             try:
-                key = getch()
-                #import pudb
-                #pudb.set_trace()
-                keylog.write( f"Key rx: [{key}]:{len(key),ord(key)}\n")
-                #keylog.flush()
-                if key == 'x' or ord(key) == CTRL_C or ord(key) == ESC:
-                    keylog.write("--quit--\n")
-                    #keylog.flush()
-                    break
+                pass
             except Exception as e:
                 # No input
                 pass
