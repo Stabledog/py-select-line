@@ -5,7 +5,6 @@
   - Requires the [blessed](https://github.com/jquast/blessed) package
 
 
-
 ### Usage:
     select-line --list [filename] {--default-row NN} {--print-full}
 
@@ -32,25 +31,46 @@ function do_example {
 ```
 
 ```bash
-appargs="./select-line.py test/test1.lst"
 
-function debug {
+appargs=test/test1.lst
+
+python=$(which python3.8 python3.7 python3.6 | head -n 1)
+scr=select-line.py
+
+function debug_one {
     #Help
-    [[ -z $PUDB_TTY ]] && return $(errExit PUDB_TTY not defined)
-    echo "Debugger on $PUDB_TTY: in case of trouble, run 'sleep 100000' on that \
-        terminal before launching debug."
-
-    python3.7 -m pudb $appargs
+    clear
+    echo "debug() waiting in $PWD for debugger attach on 0.0.0.0:5678..."
+    $python -m ptvsd --host 0.0.0.0 --port 5678 --wait $scr $appargs "$@"
+    stty sane
 }
 
-function run {
-    #Help To write logs to another terminal, do 'ln -sf /dev/my/tty/other ./slinput.log'
-    python3.7 $appargs
+function run_one {
+    #Help
+    $python $scr $appargs
+}
+
+function vscode_sh_init {
+    echo "::: Run tmx for debugging and testing. :::"
 }
 
 function tail_log {
     #Help To write to another terminal, do 'ln -sf /dev/my/tty/other ./slinput.log'
-    touch slinput.log
-    tail -f slinput.log
+    cd $taskrc_dir
+    touch quiklog-9.log
+    tail -F quiklog-9.log
 }
+
+function tmx {
+    #Help Loads run/debug/shell loop into an embedded tmux session
+    cd $taskrc_dir
+    dev-loop.sh "$@"
+}
+
+function go {
+    tkr -r
+    tmx "$@"
+}
+```
+
 ```
