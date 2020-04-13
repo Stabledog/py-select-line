@@ -37,17 +37,21 @@ appargs=test/test1.lst
 python=$(which python3.8 python3.7 python3.6 | head -n 1)
 scr=select-line.py
 
+dbgport=5679
+
 function debug_one {
     #Help
     clear
-    echo "debug() waiting in $PWD for debugger attach on 0.0.0.0:5678..."
-    $python -m ptvsd --host 0.0.0.0 --port 5678 --wait $scr $appargs "$@"
+    echo "debug() waiting in $PWD for debugger attach on 0.0.0.0:$dbgport..."
+    $python -m ptvsd --host 0.0.0.0 --port $dbgport --wait $scr $appargs $@
     stty sane
 }
 
 function run_one {
     #Help
-    $python $scr $appargs
+    local cmd="$python $scr $appargs $@"
+    echo "Running: $cmd" >&2
+    $cmd
 }
 
 function vscode_sh_init {
