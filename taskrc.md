@@ -47,9 +47,11 @@ function debug_one {
 
 function run_one {
     #Help
+    xtty=$(cat .diagloop-tty)
+    echo "diag xtty=${xtty}"
     local cmd="$python $scr $appargs $@"
     echo "Running: $cmd" >&2
-    $cmd
+    $cmd 9>${xtty}
 }
 
 function vscode_sh_init {

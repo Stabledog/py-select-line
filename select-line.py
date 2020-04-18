@@ -98,9 +98,11 @@ if __name__ == "__main__":
         try:
             if os.path.isfile(sys.argv[1]):
                 liststream = open( sys.argv[1], 'r')
+                logger.debug(f"Input loaded from ${sys.argv[1]}")
         except:
             pass
         items = liststream.read().split('\n')
+        logger.debug(f"{len(items)} items defined in input")
         model = Model(items)
 
         terminal = Terminal()

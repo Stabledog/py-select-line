@@ -3,6 +3,9 @@
 		{
 			"path": ".",
 			"name": "p y - s e l e c t - l i n e "
+		},
+		{
+			"path": "../dev-loop"
 		}
 	],
 	"settings": {
