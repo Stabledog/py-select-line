@@ -1,3 +1,5 @@
 slinput.log
 quiklog-9.log
 .devloop_inner_shrc
+.devloop*
+.diagloop*

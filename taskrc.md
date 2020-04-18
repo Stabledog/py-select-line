@@ -31,14 +31,12 @@ function do_example {
 ```
 
 ```bash
+#= = = = = = = = = = =
 
 appargs=test/test1.lst
-
 python=$(which python3.8 python3.7 python3.6 | head -n 1)
 scr=select-line.py
-
 dbgport=5679
-
 function debug_one {
     #Help
     clear
@@ -55,26 +53,10 @@ function run_one {
 }
 
 function vscode_sh_init {
-    echo "::: Run tmx for debugging and testing. :::"
+    echo "::: Run dev-loop for debugging and testing. :::"
+    dev-loop
 }
 
-function tail_log {
-    #Help To write to another terminal, do 'ln -sf /dev/my/tty/other ./slinput.log'
-    cd $taskrc_dir
-    touch quiklog-9.log
-    tail -F quiklog-9.log
-}
 
-function tmx {
-    #Help Loads run/debug/shell loop into an embedded tmux session
-    cd $taskrc_dir
-    dev-loop.sh "$@"
-}
-
-function go {
-    tkr -r
-    tmx "$@"
-}
-```
 
 ```
