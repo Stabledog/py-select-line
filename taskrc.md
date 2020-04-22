@@ -29,6 +29,8 @@ function do_example {
     fi
 }
 ```
+## Development notes:
+readline integration: https://pymotw.com/2/readline/
 
 ```bash
 #= = = = = = = = = = =

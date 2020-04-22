@@ -72,23 +72,24 @@ class Renderer:
     def __init__(self,terminal,model):
         self.model = model
         self.terminal = terminal
+        self.screen_origin = terminal.location()
+        ''' screen_origin is the logical 0,0 for the region we render,
+        containing the screen-space coordinates of the upper-left corner '''
 
     def render(self):
         for line in self.model.input_text:
             print(line)
 
-
 class App:
-
-    def __init__(self,model, event_loop, renderer):
-        self.model=model
-        self.event_loop=event_loop
-        self.renderer=renderer
+    ''' Top-level behavioral management '''
+    def __init__(self, model, terminal, event_loop, renderer):
+        self.model = model
+        self.terminal = terminal
+        self.event_loop = event_loop
+        self.renderer = renderer
 
     def run(self):
         self.event_loop.run()
-
-
 
 if __name__ == "__main__":
     with Quiklog() as lg:
@@ -104,13 +105,14 @@ if __name__ == "__main__":
         items = liststream.read().split('\n')
         logger.debug(f"{len(items)} items defined in input")
         model = Model(items)
-
         terminal = Terminal()
         event_loop = EventLoop(terminal)
-
         renderer = Renderer(terminal,model)
-
         renderer.render()
+        app = App(model, terminal, event_loop, renderer)
+        app.run()
+
+
 
 
 
