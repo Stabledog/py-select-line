@@ -22,7 +22,6 @@ class Quiklog:
         self.tty_fd=None
         self.is_tty=False
 
-    def __enter__(self):
         try:
             os.fstat(9)  # Throws if fd 9 isn't open
             self.tty_fd = 9
@@ -33,20 +32,25 @@ class Quiklog:
             self.tty_fd = os.open(self.quiklog_file, os.O_WRONLY|os.O_CREAT)
 
         self.is_tty=os.isatty(self.tty_fd)
-        self.write9(f"--- {datetime.now()} fast log opened in Log(), fd={self.tty_fd} ---")
+        self.write9(f'--- {datetime.now()} fast log opened in Log(), fd={self.tty_fd} ---')
 
         if self.main_logfile:
             logging.basicConfig(
                 filename=self.main_logfile,
                 level=logging.DEBUG,
                 format='%(levelname)s:%(asctime)s %(message)s')
+
+    def __enter__(self):
         return self
 
     def __exit__(self,type,value,traceback):
-        os.close(self.tty_fd)
+        self.debug("Quiklog.__exit__() called")
+        self.tty_fd = -1
 
     def write9(self,msg,*args,**kwargs):
         ''' Writes directly to the fd#9 log only. '''
+        if self.tty_fd < 0:
+            raise RuntimeError("Log already closed")
         os.write(self.tty_fd,f"{msg}\n".encode())
         if not self.is_tty:
             os.fsync(self.tty_fd)
