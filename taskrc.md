@@ -35,7 +35,8 @@ readline integration: https://pymotw.com/2/readline/
 ```bash
 #= = = = = = = = = = =
 
-appargs=test/test1.lst
+appargs=
+#appargs=test/test1.lst
 python=$(which python3.8 python3.7 python3.6 | head -n 1)
 scr=select-line.py
 dbgport=5679

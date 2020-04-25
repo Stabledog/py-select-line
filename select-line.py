@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+# Requires python3.7 or greater
+#
 #  Given a list of items on stdin, display them on stderr and
 #  then read keystrokes from the user to match the items.
 #  Upon selection, print the entire line selected to stdout.
@@ -14,6 +15,7 @@ from dataclasses import dataclass
 import sys
 import os
 from quiklog import Quiklog
+import readline
 
 logger = None
 
@@ -23,40 +25,25 @@ class Position:
     y = int
 
 
-class EventLoop:
-    def __init__(self,terminal):
-        self.terminal = terminal
-        self.keymap={}
-        ''' The keymap associates key events with handlers '''
 
-    def run(self):
-        term = self.terminal
-        with term.cbreak():
-            val = ''
-            while True:
-                val = term.inkey(timeout=1)
-                # type(val) is "blessed.keyboard.Keystroke"
-                if not val:
-                    self.pump_events()
-                    val = ''
-                    continue
-                elif val.is_sequence:
-                    logger.info(f"key sequence: {val},{val.name},{val.code}")
-                else:
-                    logger.info(f"key: {val}")
-                kval=val.__repr__()
-                if kval in self.keymap:
-                    logger.info(f"key {kval} has a handler, dispatching:")
-                    self.keymap[kval](kval)
-            logger.info("Quit received from key input")
-
-    def pump_events(self):
+class InputLoop:
+    def __init__(self):
         pass
 
-    def add_handler(self, keystroke, handler):
-        ''' Add a blessed.keyboard.Keystroke handler.
-        The 'keystroke' is a string as produced by 'key.__repr__()' '''
-        self.keymap[keystroke] = handler
+    def run(self):
+        while True:
+            try:
+                val = input()
+            except EOFError:
+                break
+            # type(val) is "blessed.keyboard.Keystroke"
+            if not val:
+                continue
+            logger.debug(f"input() returns: {val}")
+            print(val)
+            break
+
+
 
 @dataclass
 class Model:
@@ -103,13 +90,16 @@ if __name__ == "__main__":
         except:
             pass
         items = liststream.read().split('\n')
+        if len(items)==0:
+            sys.exit("ERROR: no list items provided to select-line.py\n")
+
         logger.debug(f"{len(items)} items defined in input")
         model = Model(items)
         terminal = Terminal()
-        event_loop = EventLoop(terminal)
+        input_loop = InputLoop()
         renderer = Renderer(terminal,model)
         renderer.render()
-        app = App(model, terminal, event_loop, renderer)
+        app = App(model, terminal, input_loop, renderer)
         app.run()
 
 
